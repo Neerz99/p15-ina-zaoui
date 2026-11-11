@@ -2,7 +2,7 @@
 
 Site vitrine de la photographe Ina Zaoui. Le site présente son portfolio par album et met en avant de jeunes photographes invités. Un espace d'administration permet à Ina de gérer ses albums, ses médias et les invités. Chaque invité peut gérer ses propres photos.
 
-[![CI](../../actions/workflows/ci.yml/badge.svg)](../../actions/workflows/ci.yml)
+[![CI](https://github.com/Neerz99/p15-ina-zaoui/actions/workflows/ci.yml/badge.svg)](https://github.com/Neerz99/p15-ina-zaoui/actions/workflows/ci.yml)
 
 ## Sommaire
 
@@ -30,7 +30,7 @@ Site vitrine de la photographe Ina Zaoui. Le site présente son portfolio par al
 
 ```bash
 # 1. Récupérer le projet
-git clone https://github.com/<votre-compte>/<repo>.git ina-zaoui
+git clone https://github.com/Neerz99/p15-ina-zaoui.git ina-zaoui
 cd ina-zaoui
 
 # 2. Installer les dépendances
