@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -14,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[UniqueEntity(fields: ['email'], message: 'Cette adresse e-mail est déjà utilisée.')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, EquatableInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -23,6 +24,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private bool $admin = false;
+
+    /**
+     * Invité dont Ina a révoqué l'accès : connexion impossible et photos masquées.
+     */
+    #[ORM\Column(options: ['default' => false])]
+    private bool $blocked = false;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: 'Le nom est obligatoire.')]
@@ -47,7 +54,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Media>
      */
-    #[ORM\OneToMany(targetEntity: Media::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: Media::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $medias;
 
     public function __construct()
@@ -126,6 +133,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function isBlocked(): bool
+    {
+        return $this->blocked;
+    }
+
+    public function setBlocked(bool $blocked): static
+    {
+        $this->blocked = $blocked;
+
+        return $this;
+    }
+
     public function getPassword(): ?string
     {
         return $this->password;
@@ -159,6 +178,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials(): void
     {
+    }
+
+    /**
+     * Appelée à chaque requête pour comparer l'utilisateur en session ($this)
+     * à sa version rechargée depuis la base : si Ina bloque un invité,
+     * sa session est invalidée immédiatement.
+     */
+    public function isEqualTo(UserInterface $user): bool
+    {
+        if (!$user instanceof self || $user->isBlocked()) {
+            return false;
+        }
+
+        $refreshedPassword = (string) $user->getPassword();
+
+        return $this->id === $user->getId()
+            && $this->email === $user->getEmail()
+            && $this->admin === $user->isAdmin()
+            && \in_array($this->password, [$refreshedPassword, hash('crc32c', $refreshedPassword)], true);
     }
 
     /**

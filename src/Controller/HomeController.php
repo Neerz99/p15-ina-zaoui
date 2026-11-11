@@ -20,24 +20,28 @@ class HomeController extends AbstractController
     #[Route('/guests', name: 'guests')]
     public function guests(UserRepository $userRepository): Response
     {
-        $guests = $userRepository->findBy(['admin' => false]);
+        $guests = $userRepository->findBy(['admin' => false, 'blocked' => false]);
 
         return $this->render('front/guests.html.twig', [
             'guests' => $guests,
         ]);
     }
 
-    #[Route('/guest/{id}', name: 'guest')]
+    #[Route('/guest/{id}', name: 'guest', requirements: ['id' => '\d+'])]
     public function guest(int $id, UserRepository $userRepository): Response
     {
-        $guest = $userRepository->find($id);
+        $guest = $userRepository->findActiveGuest($id);
+
+        if (null === $guest) {
+            throw $this->createNotFoundException('Invité introuvable.');
+        }
 
         return $this->render('front/guest.html.twig', [
             'guest' => $guest,
         ]);
     }
 
-    #[Route('/portfolio/{id}', name: 'portfolio')]
+    #[Route('/portfolio/{id}', name: 'portfolio', requirements: ['id' => '\d+'])]
     public function portfolio(
         AlbumRepository $albumRepository,
         MediaRepository $mediaRepository,
@@ -46,11 +50,18 @@ class HomeController extends AbstractController
     ): Response {
         $albums = $albumRepository->findAll();
         $album = $id ? $albumRepository->find($id) : null;
-        $user = $userRepository->findOneBy(['admin' => true]);
 
-        $medias = $album
-            ? $mediaRepository->findBy(['album' => $album])
-            : $mediaRepository->findBy(['user' => $user]);
+        if ($id && null === $album) {
+            throw $this->createNotFoundException('Album introuvable.');
+        }
+
+        $ina = $userRepository->findOneBy(['admin' => true]);
+
+        if ($album) {
+            $medias = $mediaRepository->findVisibleByAlbum($album);
+        } else {
+            $medias = $ina ? $mediaRepository->findByUser($ina) : [];
+        }
 
         return $this->render('front/portfolio.html.twig', [
             'albums' => $albums,
