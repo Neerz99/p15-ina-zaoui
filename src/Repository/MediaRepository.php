@@ -38,6 +38,28 @@ class MediaRepository extends ServiceEntityRepository
     }
 
     /**
+     * Page de la liste d'administration, avec l'artiste et l'album chargés
+     * dans la même requête (pas de N+1 dans le tableau).
+     *
+     * @return list<Media>
+     */
+    public function findPageForAdmin(?User $owner, int $page, int $perPage): array
+    {
+        $qb = $this->createQueryBuilder('m')
+            ->leftJoin('m.user', 'u')->addSelect('u')
+            ->leftJoin('m.album', 'a')->addSelect('a')
+            ->orderBy('m.id', SortDirection::Ascending)
+            ->setFirstResult($perPage * ($page - 1))
+            ->setMaxResults($perPage);
+
+        if (null !== $owner) {
+            $qb->where('m.user = :owner')->setParameter('owner', $owner);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @return list<Media>
      */
     public function findByUser(User $user): array

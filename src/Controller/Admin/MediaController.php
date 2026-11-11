@@ -35,13 +35,11 @@ class MediaController extends AbstractController
         $page = max(1, $request->query->getInt('page', 1));
 
         // Un invité ne voit que ses médias, Ina voit tout.
-        $criteria = [];
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $criteria['user'] = $this->getUser();
-        }
+        /** @var User|null $owner */
+        $owner = $this->isGranted('ROLE_ADMIN') ? null : $this->getUser();
 
-        $medias = $this->mediaRepository->findBy($criteria, ['id' => 'ASC'], self::PER_PAGE, self::PER_PAGE * ($page - 1));
-        $total = $this->mediaRepository->count($criteria);
+        $medias = $this->mediaRepository->findPageForAdmin($owner, $page, self::PER_PAGE);
+        $total = $this->mediaRepository->count(null === $owner ? [] : ['user' => $owner]);
 
         return $this->render('admin/media/index.html.twig', [
             'medias' => $medias,

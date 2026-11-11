@@ -48,6 +48,16 @@ final class HomeControllerTest extends AppWebTestCase
         self::assertSelectorCount(3, '.guest');
     }
 
+    public function testGuestsPageNeedsASingleSqlQueryForGuests(): void
+    {
+        $this->client->enableProfiler();
+        $this->client->request('GET', '/guests');
+
+        $profile = $this->client->getProfile();
+        self::assertNotFalse($profile);
+        self::assertSame(1, $profile->getCollector('db')->getQueryCount(), 'La page Invités ne doit faire qu\'une requête (pas de N+1).');
+    }
+
     public function testGuestPageShowsGuestAndPhotos(): void
     {
         $guest = $this->user('actif@example.com');
