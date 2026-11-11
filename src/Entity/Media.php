@@ -24,12 +24,12 @@ class Media
     private ?Album $album = null;
 
     #[ORM\Column]
-    private string $path;
+    private string $path = '';
 
     #[ORM\Column]
     #[Assert\NotBlank(message: 'Le titre est obligatoire.')]
     #[Assert\Length(max: 255)]
-    private string $title;
+    private string $title = '';
 
     /**
      * Fichier envoyé via le formulaire (non persisté).

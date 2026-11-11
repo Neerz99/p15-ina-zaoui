@@ -14,6 +14,7 @@ class AlbumType extends AbstractType
     {
         $builder->add('name', TextType::class, [
             'label' => 'Nom',
+            'empty_data' => '',
         ]);
     }
 

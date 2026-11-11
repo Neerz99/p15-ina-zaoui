@@ -24,6 +24,7 @@ class MediaType extends AbstractType
             ])
             ->add('title', TextType::class, [
                 'label' => 'Titre',
+                'empty_data' => '',
             ])
         ;
 
