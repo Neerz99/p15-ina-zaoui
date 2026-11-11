@@ -72,10 +72,12 @@ final class MediaControllerTest extends AppWebTestCase
         $this->loginAs('ina@zaoui.com');
         $crawler = $this->client->request('GET', '/admin/media/add');
         $form = $crawler->selectButton('Ajouter')->form();
-        $form['media[title]'] = 'Photo admin';
-        $form['media[user]']->select((string) $this->user('second@example.com')->getId());
-        $form['media[album]']->select((string) $this->album('Villes')->getId());
-        $form['media[file]']->upload(ImageFactory::png()->getPathname());
+        $form->setValues([
+            'media[title]' => 'Photo admin',
+            'media[user]' => (string) $this->user('second@example.com')->getId(),
+            'media[album]' => (string) $this->album('Villes')->getId(),
+        ]);
+        $this->upload($form, ImageFactory::png());
         $this->client->submit($form);
 
         self::assertResponseRedirects('/admin/media');
@@ -154,7 +156,14 @@ final class MediaControllerTest extends AppWebTestCase
         $crawler = $this->client->request('GET', '/admin/media/add');
         $form = $crawler->selectButton('Ajouter')->form();
         $form['media[title]'] = $title;
-        $form['media[file]']->upload($file->getPathname());
+        $this->upload($form, $file);
         $this->client->submit($form);
+    }
+
+    private function upload(\Symfony\Component\DomCrawler\Form $form, \Symfony\Component\HttpFoundation\File\UploadedFile $file): void
+    {
+        $field = $form['media[file]'];
+        self::assertInstanceOf(\Symfony\Component\DomCrawler\Field\FileFormField::class, $field);
+        $field->upload($file->getPathname());
     }
 }

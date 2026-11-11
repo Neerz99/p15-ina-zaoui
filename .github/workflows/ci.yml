@@ -1,0 +1,98 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  qualite-et-tests:
+    name: Installation, analyse statique et tests
+    runs-on: ubuntu-latest
+
+    services:
+      database:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ina_zaoui
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      APP_ENV: test
+      DATABASE_URL: "postgresql://postgres:postgres@127.0.0.1:5432/ina_zaoui?serverVersion=16&charset=utf8"
+
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@v4
+
+      # 1. Installation du projet
+      - name: Installation de PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: ctype, iconv, intl, pdo_pgsql, gd
+          coverage: pcov
+          tools: composer:v2
+
+      - name: Validation de composer.json
+        run: composer validate --strict
+
+      - name: Cache des dépendances Composer
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - name: Installation des dépendances
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Audit de sécurité des dépendances
+        run: composer audit
+
+      - name: Préparation de la base de test
+        run: |
+          php bin/console doctrine:database:create --if-not-exists
+          php bin/console doctrine:migrations:migrate --no-interaction
+          php bin/console doctrine:schema:validate
+          php bin/console doctrine:fixtures:load --no-interaction
+
+      # 2. Outils d'analyse statique
+      - name: Lint (YAML, Twig, conteneur)
+        run: |
+          php bin/console lint:yaml config --parse-tags
+          php bin/console lint:twig templates
+          php bin/console lint:container
+
+      - name: PHPStan (niveau 8)
+        run: |
+          php bin/console cache:warmup --env=dev
+          vendor/bin/phpstan analyse --no-progress --memory-limit=1G
+
+      # 3. Exécution des tests
+      - name: Tests unitaires et fonctionnels (PHPUnit) + couverture
+        run: vendor/bin/phpunit --coverage-text --coverage-clover var/coverage/clover.xml --coverage-html var/coverage/html
+
+      - name: Couverture minimale de 70 %
+        run: |
+          php -r '$x = simplexml_load_file("var/coverage/clover.xml"); $m = $x->project->metrics; $c = 100 * (int) $m["coveredstatements"] / max(1, (int) $m["statements"]); printf("Couverture : %.2f %%\n", $c); exit($c >= 70 ? 0 : 1);'
+
+      - name: Rapport de couverture (artefact)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: var/coverage/html

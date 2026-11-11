@@ -30,7 +30,7 @@ final class MediaValidationTest extends KernelTestCase
         $violations = $this->validator->validate($this->media(null));
 
         self::assertCount(1, $violations);
-        self::assertSame('Veuillez sélectionner une image.', $violations[0]->getMessage());
+        self::assertSame('Veuillez sélectionner une image.', $violations->get(0)->getMessage());
     }
 
     public function testNonImageIsRejectedByMimeType(): void
