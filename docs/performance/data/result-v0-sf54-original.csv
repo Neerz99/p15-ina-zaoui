@@ -1,0 +1,95 @@
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: str_getcsv(): the $escape parameter must be provided as its default value will change in C:\Users\Enzo\Desktop\P15-runner\perf\perf.php on line 3
+
+Deprecated: Constant E_STRICT is deprecated in C:\Users\Enzo\Desktop\P15-inazaoui\vendor\symfony\error-handler\ErrorHandler.php on line 58
+
+Deprecated: Constant E_STRICT is deprecated in C:\Users\Enzo\Desktop\P15-inazaoui\vendor\symfony\error-handler\ErrorHandler.php on line 76
+label,page,wall_ms,sf_ms,queries,mem_mb
+v0-sf54-original,/,195,135,0,24.0
+v0-sf54-original,/guests,489,413,101,30.0
+v0-sf54-original,/guest/2,263,195,2,26.0
+v0-sf54-original,/portfolio,303,218,3,26.0
+v0-sf54-original,/portfolio/1,303,220,3,26.0
+v0-sf54-original,/about,224,147,0,26.0
+v0-sf54-original,/,193,124,0,24.0
+v0-sf54-original,/guests,469,387,101,30.0
+v0-sf54-original,/guest/2,285,209,2,26.0
+v0-sf54-original,/portfolio,268,185,3,26.0
+v0-sf54-original,/portfolio/1,267,197,3,26.0
+v0-sf54-original,/about,226,148,0,26.0
+v0-sf54-original,/,223,148,0,24.0
+v0-sf54-original,/guests,496,410,101,30.0
+v0-sf54-original,/guest/2,297,216,2,26.0
+v0-sf54-original,/portfolio,318,219,3,26.0
+v0-sf54-original,/portfolio/1,255,182,3,26.0
+v0-sf54-original,/about,244,159,0,26.0
+v0-sf54-original,/,219,148,0,24.0
+v0-sf54-original,/guests,483,395,101,30.0
+v0-sf54-original,/guest/2,267,196,2,26.0
+v0-sf54-original,/portfolio,303,219,3,26.0
+v0-sf54-original,/portfolio/1,296,217,3,26.0
+v0-sf54-original,/about,192,123,0,26.0
+v0-sf54-original,/,206,137,0,24.0
+v0-sf54-original,/guests,481,391,101,30.0
+v0-sf54-original,/guest/2,249,178,2,26.0
+v0-sf54-original,/portfolio,270,188,3,26.0
+v0-sf54-original,/portfolio/1,291,209,3,26.0
+v0-sf54-original,/about,239,158,0,26.0
