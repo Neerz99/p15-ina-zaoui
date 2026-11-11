@@ -20,21 +20,22 @@
         <tbody>
             {% for media in medias %}
                 <tr>
-                    <td><img src="{{ asset(media.path) }}" width="75" /></td>
+                    <td><img src="{{ asset(media.path) }}" width="75" alt="{{ media.title }}" loading="lazy"></td>
                     <td>{{ media.title }}</td>
                     {% if is_granted('ROLE_ADMIN') %}
-                        <td>{{ media.user.name }}</td>
+                        <td>{{ media.user.name ?? '' }}</td>
                         <td>{{ media.album.name ?? '' }}</td>
                     {% endif %}
                     <td>
-                        <a href="{{ path('admin_media_delete', {id: media.id}) }}" class="btn btn-danger">Supprimer</a>
+                        <form method="post" action="{{ path('admin_media_delete', {id: media.id}) }}" onsubmit="return confirm('Supprimer ce média ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete-media-' ~ media.id) }}">
+                            <button type="submit" class="btn btn-danger">Supprimer</button>
+                        </form>
                     </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-    {% set totalPages = (total / 50)|round(0, 'ceil') %}
-
     <nav aria-label="Page navigation">
         <ul class="pagination">
             {% if page > 1 %}

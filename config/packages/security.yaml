@@ -1,11 +1,14 @@
 security:
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+
+    # Les utilisateurs (Ina et les invités) sont chargés dynamiquement depuis la base de données.
     providers:
         app_user_provider:
-            memory:
-                users:
-                    ina: { password: '$2y$13$7JS0ehfU8vZhB3Q8o1sPGuoQxkiPGXRGgrAizmNfI5Sgy.Dqt9xoW', roles: ['ROLE_ADMIN'] }
+            entity:
+                class: App\Entity\User
+                property: email
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -16,9 +19,17 @@ security:
             form_login:
                 login_path: admin_login
                 check_path: admin_login
+                default_target_path: admin_media_index
+                enable_csrf: true
+            logout:
+                path: admin_logout
+                target: home
+
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER
+
     access_control:
+        - { path: ^/admin/(album|guest), roles: ROLE_ADMIN }
         - { path: ^/admin, roles: ROLE_USER }
 
 when@test:

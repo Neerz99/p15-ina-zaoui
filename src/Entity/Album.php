@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\AlbumRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AlbumRepository::class)]
 class Album
@@ -14,6 +15,8 @@ class Album
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank(message: "Le nom de l'album est obligatoire.")]
+    #[Assert\Length(max: 255)]
     private string $name;
 
     public function getId(): ?int

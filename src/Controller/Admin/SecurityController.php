@@ -12,12 +12,19 @@ class SecurityController extends AbstractController
     #[Route('/login', name: 'admin_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        $error = $authenticationUtils->getLastAuthenticationError();
-        $lastUsername = $authenticationUtils->getLastUsername();
+        if ($this->getUser()) {
+            return $this->redirectToRoute('admin_media_index');
+        }
 
         return $this->render('admin/login.html.twig', [
-            'last_username' => $lastUsername,
-            'error' => $error,
+            'last_username' => $authenticationUtils->getLastUsername(),
+            'error' => $authenticationUtils->getLastAuthenticationError(),
         ]);
+    }
+
+    #[Route('/logout', name: 'admin_logout')]
+    public function logout(): never
+    {
+        throw new \LogicException('Intercepté par le firewall (clé logout dans security.yaml).');
     }
 }
