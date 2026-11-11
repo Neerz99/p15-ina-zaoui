@@ -13,7 +13,7 @@ use Symfony\Component\Filesystem\Filesystem;
 class MediaUploader
 {
     public function __construct(
-        #[Autowire('%kernel.project_dir%/public')]
+        #[Autowire('%app.public_dir%')]
         private readonly string $publicDir,
         private readonly Filesystem $filesystem = new Filesystem(),
     ) {

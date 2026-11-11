@@ -17,7 +17,7 @@ class Album
     #[ORM\Column]
     #[Assert\NotBlank(message: "Le nom de l'album est obligatoire.")]
     #[Assert\Length(max: 255)]
-    private string $name;
+    private string $name = '';
 
     public function getId(): ?int
     {
@@ -29,8 +29,10 @@ class Album
         return $this->name;
     }
 
-    public function setName(string $name): void
+    public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
     }
 }

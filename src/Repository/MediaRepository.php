@@ -7,6 +7,7 @@ use App\Entity\Media;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use SortDirection;
 
 /**
  * @extends ServiceEntityRepository<Media>
@@ -31,7 +32,7 @@ class MediaRepository extends ServiceEntityRepository
             ->where('m.album = :album')
             ->andWhere('u.id IS NULL OR u.blocked = false')
             ->setParameter('album', $album)
-            ->orderBy('m.id', 'ASC')
+            ->orderBy('m.id', SortDirection::Ascending)
             ->getQuery()
             ->getResult();
     }
@@ -44,7 +45,7 @@ class MediaRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('m')
             ->where('m.user = :user')
             ->setParameter('user', $user)
-            ->orderBy('m.id', 'ASC')
+            ->orderBy('m.id', SortDirection::Ascending)
             ->getQuery()
             ->getResult();
     }

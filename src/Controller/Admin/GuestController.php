@@ -7,11 +7,11 @@ use App\Form\GuestType;
 use App\Repository\UserRepository;
 use App\Service\MediaUploader;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
@@ -24,6 +24,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN')]
 class GuestController extends AbstractController
 {
+    /**
+     * Seuls les invités sont résolus (jamais Ina) : sinon 404, avant même la vérification CSRF.
+     */
+    private const GUEST_ONLY = 'repository.findOneBy({"id": id, "admin": false})';
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository $userRepository,
@@ -60,10 +65,8 @@ class GuestController extends AbstractController
 
     #[Route('/{id}/toggle-block', name: 'admin_guest_toggle_block', requirements: ['id' => '\d+'], methods: ['POST'])]
     #[IsCsrfTokenValid(new Expression('"toggle-guest-" ~ args["guest"].getId()'), tokenKey: '_token')]
-    public function toggleBlock(User $guest): Response
+    public function toggleBlock(#[MapEntity(expr: self::GUEST_ONLY)] User $guest): Response
     {
-        $this->denyIfNotGuest($guest);
-
         $guest->setBlocked(!$guest->isBlocked());
         $this->entityManager->flush();
 
@@ -76,10 +79,8 @@ class GuestController extends AbstractController
 
     #[Route('/{id}/delete', name: 'admin_guest_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
     #[IsCsrfTokenValid(new Expression('"delete-guest-" ~ args["guest"].getId()'), tokenKey: '_token')]
-    public function delete(User $guest, MediaUploader $mediaUploader): Response
+    public function delete(#[MapEntity(expr: self::GUEST_ONLY)] User $guest, MediaUploader $mediaUploader): Response
     {
-        $this->denyIfNotGuest($guest);
-
         // Suppression en cascade : les médias sont supprimés en base (orphanRemoval / ON DELETE CASCADE)
         // et les fichiers correspondants sont retirés du disque.
         $medias = $guest->getMedias()->toArray();
@@ -95,12 +96,5 @@ class GuestController extends AbstractController
         $this->addFlash('success', sprintf('L\'invité « %s » et ses %d média(s) ont été supprimés.', $name, \count($medias)));
 
         return $this->redirectToRoute('admin_guest_index');
-    }
-
-    private function denyIfNotGuest(User $user): void
-    {
-        if ($user->isAdmin()) {
-            throw new NotFoundHttpException('Invité introuvable.');
-        }
     }
 }
