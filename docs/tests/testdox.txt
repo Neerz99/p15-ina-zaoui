@@ -1,0 +1,96 @@
+Album Controller (App\Tests\Functional\Admin\AlbumController)
+ [x] Guest cannot access albums
+ [x] Ina can list albums
+ [x] Ina can create an album
+ [x] Album name is required
+ [x] Ina can rename an album
+ [x] Deleting an album keeps its medias
+
+Guest Controller (App\Tests\Functional\Admin\GuestController)
+ [x] Guest management is reserved to ina
+ [x] Ina sees all guests with status and media count
+ [x] Ina can add a guest with a hashed password
+ [x] Adding a guest validates the form
+ [x] Ina can block then unblock a guest
+ [x] Deleting a guest deletes its medias and files
+ [x] Ina cannot be blocked or deleted
+
+Home Controller (App\Tests\Functional\Front\HomeController)
+ [x] Home page
+ [x] Navigation links are present
+ [x] Guests page lists active guests with media count
+ [x] Guests page hides blocked guests and ina
+ [x] Guests page needs a single sql query for guests
+ [x] Guest page shows guest and photos
+ [x] Blocked guest page is not found
+ [x] Admin is not a guest
+ [x] Unknown guest is not found
+ [x] Portfolio shows ina photos by default
+ [x] Portfolio album filter hides blocked guest photos
+ [x] Portfolio lists all albums
+ [x] Unknown album is not found
+ [x] About page
+
+Media Controller (App\Tests\Functional\Admin\MediaController)
+ [x] Ina sees all medias
+ [x] Guest only sees its own medias
+ [x] Pagination uses 25 medias per page
+ [x] Guest can upload a valid image
+ [x] Ina can upload for a guest in an album
+ [x] Upload rejects non image file
+ [x] Upload rejects file over 2 mb
+ [x] Guest can delete its own media
+ [x] Guest cannot delete another guest media
+ [x] Delete requires a valid csrf token
+ [x] Delete is not allowed with get
+
+Media Uploader (App\Tests\Unit\Service\MediaUploader)
+ [x] Upload moves file with random name and stores relative path
+ [x] Upload without file throws
+ [x] Remove deletes file and ignores missing ones
+
+Media Validation (App\Tests\Functional\MediaValidation)
+ [x] Valid image is accepted
+ [x] File is required
+ [x] Non image is rejected by mime type
+ [x] Image over 2 mb is rejected
+ [x] Title is required
+
+Media Voter (App\Tests\Unit\Security\MediaVoter)
+ [x] Vote with data set "Ina peut gérer le média d'un invité"
+ [x] Vote with data set "un invité peut gérer son propre média"
+ [x] Vote with data set "un invité ne peut pas gérer le média d'un autre"
+ [x] Anonymous is denied
+ [x] Abstains on other attributes
+
+Security Controller (App\Tests\Functional\SecurityController)
+ [x] Login page is displayed
+ [x] Ina can log in with her email
+ [x] Guest can log in
+ [x] Wrong password is rejected
+ [x] Blocked guest cannot log in
+ [x] Logged user is redirected from login page
+ [x] Logout
+ [x] Admin area requires authentication
+ [x] Blocking a guest ends its session
+
+User (App\Tests\Unit\Entity\User)
+ [x] Admin has admin and user roles
+ [x] Guest only has user role
+ [x] Email is the user identifier
+ [x] Guest is not blocked by default
+ [x] Accessors and medias collection
+ [x] Session is invalidated when user gets blocked
+ [x] Session is kept when nothing changed
+ [x] Session is invalidated when password changed
+ [x] Session is invalidated for another user class
+ [x] Serialization does not expose the password hash
+
+User Checker (App\Tests\Unit\Security\UserChecker)
+ [x] Blocked guest cannot log in
+ [x] Active guest can log in
+
+User Repository (App\Tests\Functional\UserRepository)
+ [x] Find guests with media count returns all guests sorted by name
+ [x] Find guests with media count can exclude blocked guests
+
