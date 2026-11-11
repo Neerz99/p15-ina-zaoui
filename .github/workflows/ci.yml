@@ -36,7 +36,7 @@ jobs:
 
     steps:
       - name: Récupération du code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # 1. Installation du projet
       - name: Installation de PHP 8.4
@@ -92,7 +92,7 @@ jobs:
 
       - name: Rapport de couverture (artefact)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: coverage-report
           path: var/coverage/html
