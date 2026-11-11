@@ -9,6 +9,10 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 final class ImageFactory
 {
+    /**
+     * @param int<1, max> $width
+     * @param int<1, max> $height
+     */
     public static function png(int $width = 20, int $height = 20): UploadedFile
     {
         $path = self::tempPath('png');

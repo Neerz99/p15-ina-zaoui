@@ -54,8 +54,10 @@ final class HomeControllerTest extends AppWebTestCase
         $this->client->request('GET', '/guests');
 
         $profile = $this->client->getProfile();
-        self::assertNotFalse($profile);
-        self::assertSame(1, $profile->getCollector('db')->getQueryCount(), 'La page Invités ne doit faire qu\'une requête (pas de N+1).');
+        self::assertInstanceOf(\Symfony\Component\HttpKernel\Profiler\Profile::class, $profile);
+        $collector = $profile->getCollector('db');
+        self::assertInstanceOf(\Doctrine\Bundle\DoctrineBundle\DataCollector\DoctrineDataCollector::class, $collector);
+        self::assertSame(1, $collector->getQueryCount(), 'La page Invités ne doit faire qu\'une requête (pas de N+1).');
     }
 
     public function testGuestPageShowsGuestAndPhotos(): void

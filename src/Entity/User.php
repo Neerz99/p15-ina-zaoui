@@ -34,7 +34,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
     #[ORM\Column]
     #[Assert\NotBlank(message: 'Le nom est obligatoire.')]
     #[Assert\Length(max: 255)]
-    private ?string $name = null;
+    private string $name = '';
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
@@ -43,13 +43,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
     #[Assert\NotBlank(message: "L'adresse e-mail est obligatoire.")]
     #[Assert\Email(message: "L'adresse e-mail n'est pas valide.")]
     #[Assert\Length(max: 180)]
-    private ?string $email = null;
+    private string $email = '';
 
     /**
      * Mot de passe hashé (jamais en clair).
      */
     #[ORM\Column]
-    private ?string $password = null;
+    private string $password = '';
 
     /**
      * @var Collection<int, Media>
@@ -67,7 +67,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
         return $this->id;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }
@@ -79,12 +79,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
         return $this;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function setName(?string $name): static
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -145,7 +145,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
         return $this;
     }
 
-    public function getPassword(): ?string
+    public function getPassword(): string
     {
         return $this->password;
     }
@@ -162,7 +162,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        if ('' === $this->email) {
+            throw new \LogicException('Un utilisateur doit avoir une adresse e-mail.');
+        }
+
+        return $this->email;
     }
 
     /**
@@ -191,7 +195,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
             return false;
         }
 
-        $refreshedPassword = (string) $user->getPassword();
+        $refreshedPassword = $user->getPassword();
 
         return $this->id === $user->getId()
             && $this->email === $user->getEmail()
@@ -207,7 +211,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
     public function __serialize(): array
     {
         $data = (array) $this;
-        $data["\0".self::class."\0password"] = hash('crc32c', (string) $this->password);
+        $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
 
         return $data;
     }
