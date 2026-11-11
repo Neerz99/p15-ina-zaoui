@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\MediaRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
 class Media
@@ -15,17 +16,33 @@ class Media
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: "medias", fetch: "EAGER")]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?User $user = null;
 
     #[ORM\ManyToOne(targetEntity: Album::class, fetch: "EAGER")]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Album $album = null;
 
     #[ORM\Column]
     private string $path;
 
     #[ORM\Column]
+    #[Assert\NotBlank(message: 'Le titre est obligatoire.')]
+    #[Assert\Length(max: 255)]
     private string $title;
 
+    /**
+     * Fichier envoyé via le formulaire (non persisté).
+     * Le type est vérifié par son type MIME réel (et non par l'extension) et la taille est limitée à 2 Mo.
+     */
+    #[Assert\NotNull(message: 'Veuillez sélectionner une image.')]
+    #[Assert\Image(
+        maxSize: '2M',
+        mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
+        maxSizeMessage: 'Le fichier est trop volumineux ({{ size }} {{ suffix }}). La taille maximale autorisée est de {{ limit }} {{ suffix }}.',
+        mimeTypesMessage: 'Le fichier doit être une image (JPEG, PNG, WebP ou GIF).',
+        uploadIniSizeErrorMessage: 'Le fichier est trop volumineux. La taille maximale autorisée est de 2 Mo.',
+    )]
     private ?UploadedFile $file = null;
 
     public function getId(): ?int

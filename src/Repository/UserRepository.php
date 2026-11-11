@@ -11,13 +11,6 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
 /**
  * @extends ServiceEntityRepository<User>
- *
- * @implements PasswordUpgraderInterface<User>
- *
- * @method User|null find($id, $lockMode = null, $lockVersion = null)
- * @method User|null findOneBy(array $criteria, array $orderBy = null)
- * @method User[]    findAll()
- * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
@@ -36,32 +29,39 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
 
         $user->setPassword($newHashedPassword);
-        $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
     }
 
-//    /**
-//     * @return User[] Returns an array of User objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('u.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * Liste des invités avec leur nombre de médias, en UNE seule requête SQL
+     * (COUNT + GROUP BY) au lieu d'une requête par invité.
+     *
+     * @return list<array{guest: User, mediaCount: int}>
+     */
+    public function findGuestsWithMediaCount(bool $onlyActive = false): array
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->select('u AS guest', 'COUNT(m.id) AS mediaCount')
+            ->leftJoin('u.medias', 'm')
+            ->where('u.admin = false')
+            ->groupBy('u.id')
+            ->orderBy('u.name', 'ASC');
 
-//    public function findOneBySomeField($value): ?User
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        if ($onlyActive) {
+            $qb->andWhere('u.blocked = false');
+        }
+
+        return array_map(
+            static fn (array $row): array => ['guest' => $row['guest'], 'mediaCount' => (int) $row['mediaCount']],
+            $qb->getQuery()->getResult(),
+        );
+    }
+
+    /**
+     * Invité visible sur le site public (ni admin, ni bloqué).
+     */
+    public function findActiveGuest(int $id): ?User
+    {
+        return $this->findOneBy(['id' => $id, 'admin' => false, 'blocked' => false]);
+    }
 }

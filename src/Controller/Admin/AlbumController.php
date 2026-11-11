@@ -3,70 +3,77 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Album;
-use App\Entity\Media;
 use App\Form\AlbumType;
-use App\Form\MediaType;
+use App\Repository\AlbumRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[Route('/admin/album')]
+#[IsGranted('ROLE_ADMIN')]
 class AlbumController extends AbstractController
 {
-    /**
-     * @Route("/admin/album", name="admin_album_index")
-     */
-    public function index()
-    {
-        $albums = $this->getDoctrine()->getRepository(Album::class)->findAll();
-
-        return $this->render('admin/album/index.html.twig', ['albums' => $albums]);
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly AlbumRepository $albumRepository,
+    ) {
     }
 
-    /**
-     * @Route("/admin/album/add", name="admin_album_add")
-     */
-    public function add(Request $request)
+    #[Route('', name: 'admin_album_index', methods: ['GET'])]
+    public function index(): Response
+    {
+        return $this->render('admin/album/index.html.twig', [
+            'albums' => $this->albumRepository->findBy([], ['name' => 'ASC']),
+        ]);
+    }
+
+    #[Route('/add', name: 'admin_album_add', methods: ['GET', 'POST'])]
+    public function add(Request $request): Response
     {
         $album = new Album();
         $form = $this->createForm(AlbumType::class, $album);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->persist($album);
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->persist($album);
+            $this->entityManager->flush();
+            $this->addFlash('success', "L'album a bien été créé.");
 
             return $this->redirectToRoute('admin_album_index');
         }
 
-        return $this->render('admin/album/add.html.twig', ['form' => $form->createView()]);
+        return $this->render('admin/album/add.html.twig', ['form' => $form]);
     }
 
-    /**
-     * @Route("/admin/album/update/{id}", name="admin_album_update")
-     */
-    public function update(Request $request, int $id)
+    #[Route('/update/{id}', name: 'admin_album_update', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    public function update(Request $request, Album $album): Response
     {
-        $album = $this->getDoctrine()->getRepository(Album::class)->find($id);
         $form = $this->createForm(AlbumType::class, $album);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
+            $this->addFlash('success', "L'album a bien été modifié.");
 
             return $this->redirectToRoute('admin_album_index');
         }
 
-        return $this->render('admin/album/update.html.twig', ['form' => $form->createView()]);
+        return $this->render('admin/album/update.html.twig', ['form' => $form]);
     }
 
-    /**
-     * @Route("/admin/album/delete/{id}", name="admin_album_delete")
-     */
-    public function delete(int $id)
+    #[Route('/delete/{id}', name: 'admin_album_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[IsCsrfTokenValid(new Expression('"delete-album-" ~ args["album"].getId()'), tokenKey: '_token')]
+    public function delete(Album $album): Response
     {
-        $media = $this->getDoctrine()->getRepository(Album::class)->find($id);
-        $this->getDoctrine()->getManager()->remove($media);
-        $this->getDoctrine()->getManager()->flush();
+        // Les médias de l'album sont conservés (clé étrangère ON DELETE SET NULL).
+        $this->entityManager->remove($album);
+        $this->entityManager->flush();
+        $this->addFlash('success', "L'album a bien été supprimé.");
 
         return $this->redirectToRoute('admin_album_index');
     }

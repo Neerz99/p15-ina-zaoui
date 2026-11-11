@@ -3,74 +3,88 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Media;
+use App\Entity\User;
 use App\Form\MediaType;
+use App\Repository\MediaRepository;
+use App\Security\Voter\MediaVoter;
+use App\Service\MediaUploader;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[Route('/admin/media')]
 class MediaController extends AbstractController
 {
-    /**
-     * @Route("/admin/media", name="admin_media_index")
-     */
-    public function index(Request $request)
+    public const PER_PAGE = 25;
+
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly MediaRepository $mediaRepository,
+        private readonly MediaUploader $mediaUploader,
+    ) {
+    }
+
+    #[Route('', name: 'admin_media_index', methods: ['GET'])]
+    public function index(Request $request): Response
     {
-        $page = $request->query->getInt('page', 1);
+        $page = max(1, $request->query->getInt('page', 1));
 
+        // Un invité ne voit que ses médias, Ina voit tout.
         $criteria = [];
-
         if (!$this->isGranted('ROLE_ADMIN')) {
             $criteria['user'] = $this->getUser();
         }
 
-        $medias = $this->getDoctrine()->getRepository(Media::class)->findBy(
-            $criteria,
-            ['id' => 'ASC'],
-            25,
-            25 * ($page - 1)
-        );
-        $total = $this->getDoctrine()->getRepository(Media::class)->count([]);
+        $medias = $this->mediaRepository->findBy($criteria, ['id' => 'ASC'], self::PER_PAGE, self::PER_PAGE * ($page - 1));
+        $total = $this->mediaRepository->count($criteria);
 
         return $this->render('admin/media/index.html.twig', [
             'medias' => $medias,
             'total' => $total,
-            'page' => $page
+            'page' => $page,
+            'totalPages' => max(1, (int) ceil($total / self::PER_PAGE)),
         ]);
     }
 
-    /**
-     * @Route("/admin/media/add", name="admin_media_add")
-     */
-    public function add(Request $request)
+    #[Route('/add', name: 'admin_media_add', methods: ['GET', 'POST'])]
+    public function add(Request $request): Response
     {
         $media = new Media();
-        $form = $this->createForm(MediaType::class, $media, ['is_admin' => $this->isGranted('ROLE_ADMIN')]);
+        $isAdmin = $this->isGranted('ROLE_ADMIN');
+        $form = $this->createForm(MediaType::class, $media, ['is_admin' => $isAdmin]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (!$this->isGranted('ROLE_ADMIN')) {
-                $media->setUser($this->getUser());
+            if (!$isAdmin) {
+                /** @var User $user */
+                $user = $this->getUser();
+                $media->setUser($user);
             }
-            $media->setPath('uploads/' . md5(uniqid()) . '.' . $media->getFile()->guessExtension());
-            $media->getFile()->move('uploads/', $media->getPath());
-            $this->getDoctrine()->getManager()->persist($media);
-            $this->getDoctrine()->getManager()->flush();
+            $this->mediaUploader->upload($media);
+            $this->entityManager->persist($media);
+            $this->entityManager->flush();
+            $this->addFlash('success', 'Le média a bien été ajouté.');
 
             return $this->redirectToRoute('admin_media_index');
         }
 
-        return $this->render('admin/media/add.html.twig', ['form' => $form->createView()]);
+        return $this->render('admin/media/add.html.twig', ['form' => $form]);
     }
 
-    /**
-     * @Route("/admin/media/delete/{id}", name="admin_media_delete")
-     */
-    public function delete(int $id)
+    #[Route('/delete/{id}', name: 'admin_media_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[IsGranted(MediaVoter::MANAGE, subject: 'media')]
+    #[IsCsrfTokenValid(new Expression('"delete-media-" ~ args["media"].getId()'), tokenKey: '_token')]
+    public function delete(Media $media): Response
     {
-        $media = $this->getDoctrine()->getRepository(Media::class)->find($id);
-        $this->getDoctrine()->getManager()->remove($media);
-        $this->getDoctrine()->getManager()->flush();
-        unlink($media->getPath());
+        $this->entityManager->remove($media);
+        $this->entityManager->flush();
+        $this->mediaUploader->remove($media);
+        $this->addFlash('success', 'Le média a bien été supprimé.');
 
         return $this->redirectToRoute('admin_media_index');
     }

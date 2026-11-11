@@ -1,0 +1,6 @@
+# Protection CSRF classique (jetons stockés en session) pour les formulaires,
+# la connexion et les actions sensibles (suppression, blocage).
+framework:
+    csrf_protection: true
+    form:
+        csrf_protection: true

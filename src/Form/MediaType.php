@@ -19,6 +19,8 @@ class MediaType extends AbstractType
         $builder
             ->add('file', FileType::class, [
                 'label' => 'Image',
+                'help' => 'JPEG, PNG, WebP ou GIF — 2 Mo maximum.',
+                'attr' => ['accept' => 'image/jpeg,image/png,image/webp,image/gif'],
             ])
             ->add('title', TextType::class, [
                 'label' => 'Titre',
@@ -49,5 +51,6 @@ class MediaType extends AbstractType
             'data_class' => Media::class,
             'is_admin' => false,
         ]);
+        $resolver->setAllowedTypes('is_admin', 'bool');
     }
 }

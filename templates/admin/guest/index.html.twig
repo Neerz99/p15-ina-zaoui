@@ -1,0 +1,50 @@
+{% extends 'admin.html.twig' %}
+
+{% block admin %}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Invités</h1>
+        <a href="{{ path('admin_guest_add') }}" class="btn btn-primary">Ajouter un invité</a>
+    </div>
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>E-mail</th>
+                <th>Médias</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in guests %}
+                {% set guest = row.guest %}
+                <tr>
+                    <td>{{ guest.name }}</td>
+                    <td>{{ guest.email }}</td>
+                    <td>{{ row.mediaCount }}</td>
+                    <td>
+                        {% if guest.blocked %}
+                            <span class="badge text-bg-danger">Bloqué</span>
+                        {% else %}
+                            <span class="badge text-bg-success">Actif</span>
+                        {% endif %}
+                    </td>
+                    <td class="d-flex gap-2">
+                        <form method="post" action="{{ path('admin_guest_toggle_block', {id: guest.id}) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('toggle-guest-' ~ guest.id) }}">
+                            <button type="submit" class="btn btn-{{ guest.blocked ? 'success' : 'warning' }}">
+                                {{ guest.blocked ? 'Débloquer' : 'Bloquer' }}
+                            </button>
+                        </form>
+                        <form method="post" action="{{ path('admin_guest_delete', {id: guest.id}) }}" onsubmit="return confirm('Supprimer cet invité et toutes ses photos ? Cette action est irréversible.');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete-guest-' ~ guest.id) }}">
+                            <button type="submit" class="btn btn-danger">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="5">Aucun invité.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
