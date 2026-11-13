@@ -7,9 +7,6 @@ use App\Tests\Support\ImageFactory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-/**
- * Vérifie les règles de validation de l'upload (composant Validator).
- */
 final class MediaValidationTest extends KernelTestCase
 {
     private ValidatorInterface $validator;

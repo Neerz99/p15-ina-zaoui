@@ -32,8 +32,7 @@ class Media
     private string $title = '';
 
     /**
-     * Fichier envoyé via le formulaire (non persisté).
-     * Le type est vérifié par son type MIME réel (et non par l'extension) et la taille est limitée à 2 Mo.
+     * Non persisté. Type vérifié sur le MIME réel, 2 Mo max.
      */
     #[Assert\NotNull(message: 'Veuillez sélectionner une image.')]
     #[Assert\Image(

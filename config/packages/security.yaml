@@ -2,7 +2,6 @@ security:
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
 
-    # Les utilisateurs (Ina et les invités) sont chargés dynamiquement depuis la base de données.
     providers:
         app_user_provider:
             entity:

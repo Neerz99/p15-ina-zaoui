@@ -79,7 +79,6 @@ final class GuestControllerTest extends AppWebTestCase
         $this->em()->clear();
         self::assertTrue($this->user('actif@example.com')->isBlocked());
 
-        // ses photos disparaissent du site
         $this->client->request('GET', '/guest/'.$guest->getId());
         self::assertResponseStatusCodeSame(404);
 

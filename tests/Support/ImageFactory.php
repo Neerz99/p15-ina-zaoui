@@ -4,9 +4,6 @@ namespace App\Tests\Support;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-/**
- * Fabrique de fichiers temporaires pour tester l'upload.
- */
 final class ImageFactory
 {
     /**
@@ -22,7 +19,7 @@ final class ImageFactory
     }
 
     /**
-     * Fichier JPEG valide de plus de 2 Mo (bruit aléatoire, très peu compressible).
+     * JPEG > 2 Mo (bruit aléatoire, peu compressible).
      */
     public static function bigJpeg(): UploadedFile
     {
@@ -39,7 +36,7 @@ final class ImageFactory
     }
 
     /**
-     * Fichier texte déguisé avec une extension .jpg : le type MIME réel est vérifié.
+     * Fichier texte renommé en .jpg.
      */
     public static function fakeImage(): UploadedFile
     {

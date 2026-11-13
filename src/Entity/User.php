@@ -25,9 +25,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
     #[ORM\Column]
     private bool $admin = false;
 
-    /**
-     * Invité dont Ina a révoqué l'accès : connexion impossible et photos masquées.
-     */
     #[ORM\Column(options: ['default' => false])]
     private bool $blocked = false;
 
@@ -45,9 +42,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
     #[Assert\Length(max: 180)]
     private string $email = '';
 
-    /**
-     * Mot de passe hashé (jamais en clair).
-     */
     #[ORM\Column]
     private string $password = '';
 
@@ -157,9 +151,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
         return $this;
     }
 
-    /**
-     * Identifiant de connexion : l'adresse e-mail.
-     */
     public function getUserIdentifier(): string
     {
         if ('' === $this->email) {
@@ -170,8 +161,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
     }
 
     /**
-     * Les rôles sont déduits du booléen « admin » déjà présent en base :
-     * Ina est ROLE_ADMIN, les invités sont ROLE_USER.
+     * Rôles déduits du champ admin.
      *
      * @return list<string>
      */
@@ -184,11 +174,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
     {
     }
 
-    /**
-     * Appelée à chaque requête pour comparer l'utilisateur en session ($this)
-     * à sa version rechargée depuis la base : si Ina bloque un invité,
-     * sa session est invalidée immédiatement.
-     */
+    // Déconnecte un invité bloqué pendant sa session.
     public function isEqualTo(UserInterface $user): bool
     {
         if (!$user instanceof self || $user->isBlocked()) {
@@ -204,7 +190,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
     }
 
     /**
-     * Ne sérialise pas le hash complet en session (bonne pratique Symfony 7.3+).
+     * Stocke un hash crc32c du mot de passe en session plutôt que le hash complet.
      *
      * @return array<string, mixed>
      */

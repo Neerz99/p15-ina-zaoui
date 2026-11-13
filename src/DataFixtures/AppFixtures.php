@@ -10,13 +10,8 @@ use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
- * Jeu de données de test représentatif :
- * - Ina (admin) avec des photos dans deux albums et hors album ;
- * - deux invités actifs avec des photos (dont une dans un album) ;
- * - un invité bloqué dont les photos ne doivent jamais apparaître ;
- * - un invité sans photo.
- *
- * Mot de passe de tous les comptes : « password ».
+ * Comptes : admin, 2 invités actifs, 1 invité bloqué, 1 invité sans photo.
+ * Mot de passe commun : "password".
  */
 class AppFixtures extends Fixture
 {

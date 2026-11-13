@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
- * Un invité ne peut gérer que ses propres médias ; Ina (admin) peut tout gérer.
+ * Un invité ne gère que ses médias, l'admin gère tout.
  *
  * @extends Voter<string, Media>
  */

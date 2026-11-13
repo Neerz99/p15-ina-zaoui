@@ -1,4 +1,4 @@
-# Ina Zaoui — site de la photographe
+# Ina Zaoui, site de la photographe
 
 Site vitrine de la photographe Ina Zaoui. Le site présente son portfolio par album et met en avant de jeunes photographes invités. Un espace d'administration permet à Ina de gérer ses albums, ses médias et les invités. Chaque invité peut gérer ses propres photos.
 
@@ -114,8 +114,8 @@ La connexion se fait avec l'**adresse e-mail** et le mot de passe.
 | Fonction | Ina (`ROLE_ADMIN`) | Invité (`ROLE_USER`) |
 |---|---|---|
 | Médias : lister, ajouter, supprimer | tous les médias | uniquement les siens |
-| Albums : créer, renommer, supprimer | ✅ | ❌ (403) |
-| Invités : lister (statut), ajouter, bloquer/débloquer, supprimer | ✅ | ❌ (403) |
+| Albums : créer, renommer, supprimer | Oui | Non (403) |
+| Invités : lister (statut), ajouter, bloquer/débloquer, supprimer | Oui | Non (403) |
 
 Ce qu'il faut savoir sur ces fonctions :
 

@@ -11,7 +11,7 @@ final class Version20261111160000 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Gestion des invités : statut « bloqué » et suppression en cascade des médias d\'un invité';
+        return 'Ajout de user.blocked et suppression en cascade des médias';
     }
 
     public function up(Schema $schema): void

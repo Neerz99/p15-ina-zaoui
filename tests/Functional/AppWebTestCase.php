@@ -10,9 +10,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
- * Base des tests fonctionnels : les fixtures (AppFixtures) sont chargées une fois
- * dans la base de test et chaque test est isolé dans une transaction annulée
- * (DAMADoctrineTestBundle).
+ * Chaque test tourne dans une transaction annulée (DAMADoctrineTestBundle).
  */
 abstract class AppWebTestCase extends WebTestCase
 {

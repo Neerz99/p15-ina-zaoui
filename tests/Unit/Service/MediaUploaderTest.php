@@ -57,7 +57,7 @@ final class MediaUploaderTest extends TestCase
         $uploader->remove($media);
         self::assertFileDoesNotExist($this->publicDir.'/uploads/a.jpg');
 
-        $uploader->remove($media); // fichier déjà absent : aucune erreur
+        $uploader->remove($media);
         $this->addToAssertionCount(1);
     }
 }

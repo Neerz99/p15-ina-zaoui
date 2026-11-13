@@ -8,9 +8,6 @@ use Symfony\Component\Security\Core\Exception\CustomUserMessageAccountStatusExce
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-/**
- * Refuse la connexion d'un invité bloqué par Ina.
- */
 final class UserChecker implements UserCheckerInterface
 {
     public function checkPreAuth(UserInterface $user): void

@@ -17,16 +17,11 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-/**
- * Gestion des invités, réservée à Ina (ROLE_ADMIN).
- */
 #[Route('/admin/guest')]
 #[IsGranted('ROLE_ADMIN')]
 class GuestController extends AbstractController
 {
-    /**
-     * Seuls les invités sont résolus (jamais Ina) : sinon 404, avant même la vérification CSRF.
-     */
+    // Ne résout que des invités : 404 sur un admin.
     private const GUEST_ONLY = 'repository.findOneBy({"id": id, "admin": false})';
 
     public function __construct(
@@ -81,8 +76,7 @@ class GuestController extends AbstractController
     #[IsCsrfTokenValid(new Expression('"delete-guest-" ~ args["guest"].getId()'), tokenKey: '_token')]
     public function delete(#[MapEntity(expr: self::GUEST_ONLY)] User $guest, MediaUploader $mediaUploader): Response
     {
-        // Suppression en cascade : les médias sont supprimés en base (orphanRemoval / ON DELETE CASCADE)
-        // et les fichiers correspondants sont retirés du disque.
+        // Les médias partent en cascade, il reste à supprimer les fichiers.
         $medias = $guest->getMedias()->toArray();
         $name = $guest->getName();
 

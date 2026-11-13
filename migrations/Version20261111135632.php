@@ -14,7 +14,7 @@ final class Version20261111135632 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Schéma initial (album, media, user) — état du site avant refonte';
+        return 'Schéma initial (album, media, user)';
     }
 
     public function up(Schema $schema): void
