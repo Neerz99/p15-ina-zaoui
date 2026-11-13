@@ -70,7 +70,7 @@ class AlbumController extends AbstractController
     #[IsCsrfTokenValid(new Expression('"delete-album-" ~ args["album"].getId()'), tokenKey: '_token')]
     public function delete(Album $album): Response
     {
-        // Les médias de l'album sont conservés (clé étrangère ON DELETE SET NULL).
+        // media.album_id passe à NULL (ON DELETE SET NULL).
         $this->entityManager->remove($album);
         $this->entityManager->flush();
         $this->addFlash('success', "L'album a bien été supprimé.");

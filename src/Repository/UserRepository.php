@@ -34,8 +34,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
-     * Liste des invités avec leur nombre de médias, en UNE seule requête SQL
-     * (COUNT + GROUP BY) au lieu d'une requête par invité.
+     * Invités + nombre de médias en une requête (évite le N+1 sur /guests).
      *
      * @return list<array{guest: User, mediaCount: int}>
      */
@@ -58,9 +57,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         );
     }
 
-    /**
-     * Invité visible sur le site public (ni admin, ni bloqué).
-     */
     public function findActiveGuest(int $id): ?User
     {
         return $this->findOneBy(['id' => $id, 'admin' => false, 'blocked' => false]);

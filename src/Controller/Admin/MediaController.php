@@ -34,7 +34,6 @@ class MediaController extends AbstractController
     {
         $page = max(1, $request->query->getInt('page', 1));
 
-        // Un invité ne voit que ses médias, Ina voit tout.
         /** @var User|null $owner */
         $owner = $this->isGranted('ROLE_ADMIN') ? null : $this->getUser();
 

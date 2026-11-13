@@ -4,9 +4,6 @@ namespace App\Tests\Functional\Front;
 
 use App\Tests\Functional\AppWebTestCase;
 
-/**
- * Tests du Front Office : accueil, invités, page invité, portfolio, à propos.
- */
 final class HomeControllerTest extends AppWebTestCase
 {
     public function testHomePage(): void

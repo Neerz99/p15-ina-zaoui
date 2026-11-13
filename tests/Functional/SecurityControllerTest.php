@@ -4,9 +4,6 @@ namespace App\Tests\Functional;
 
 use App\DataFixtures\AppFixtures;
 
-/**
- * Connexion chargée depuis la base de données (provider « entity »).
- */
 final class SecurityControllerTest extends AppWebTestCase
 {
     public function testLoginPageIsDisplayed(): void

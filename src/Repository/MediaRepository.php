@@ -20,7 +20,7 @@ class MediaRepository extends ServiceEntityRepository
     }
 
     /**
-     * Médias d'un album visibles sur le site : les photos des invités bloqués sont masquées.
+     * Exclut les médias des invités bloqués.
      *
      * @return list<Media>
      */
@@ -38,8 +38,7 @@ class MediaRepository extends ServiceEntityRepository
     }
 
     /**
-     * Page de la liste d'administration, avec l'artiste et l'album chargés
-     * dans la même requête (pas de N+1 dans le tableau).
+     * Liste admin paginée, user et album joints.
      *
      * @return list<Media>
      */

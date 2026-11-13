@@ -1,5 +1,5 @@
 param([string]$Label = 'run', [int]$N = 5, [string[]]$Pages = @('/','/guests','/guest/2','/portfolio','/portfolio/1','/about'))
-$proj = "$env:USERPROFILE\Desktop\P15-inazaoui"; $out = "$env:USERPROFILE\Desktop\P15-runner\perf"
+$proj = (Resolve-Path "$PSScriptRoot\..\..\..").Path; $out = $PSScriptRoot
 $csv = "$out\tokens-$Label.csv"; Remove-Item $csv -ErrorAction SilentlyContinue
 foreach($u in $Pages){ Invoke-WebRequest "http://127.0.0.1:8015$u" -UseBasicParsing -TimeoutSec 120 | Out-Null } # warmup
 foreach($i in 1..$N){ foreach($u in $Pages){

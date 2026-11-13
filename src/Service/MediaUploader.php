@@ -7,8 +7,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
- * Déplace les fichiers envoyés dans public/uploads et les supprime du disque.
- * Le chemin stocké en base reste relatif à public/ (ex. « uploads/abc.jpg »).
+ * Le chemin stocké en base est relatif à public/ (ex: uploads/abc.jpg).
  */
 class MediaUploader
 {

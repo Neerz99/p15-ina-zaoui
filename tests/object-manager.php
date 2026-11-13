@@ -1,6 +1,6 @@
 <?php
 
-// Chargeur utilisé par PHPStan (extension Doctrine) pour connaître le mapping des entités.
+// Utilisé par phpstan-doctrine.
 use App\Kernel;
 use Symfony\Component\Dotenv\Dotenv;
 
